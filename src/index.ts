@@ -71,6 +71,7 @@ io.on('connection', (socket: any) => {
    * Join Room
    */
   socket.on('BE-join-room', ({ roomId, userName, video, audio }: any) => {
+
     socket.join(roomId);
     socketList[socket.id] = {
       userName,
@@ -85,7 +86,9 @@ io.on('connection', (socket: any) => {
         try {
           const users: { userId: string; info: any }[] = [];
           clients.forEach((clientId: string) => {
-            users.push({ userId: clientId, info: socketList[clientId] });
+            if (socketList[clientId]) {
+              users.push({ userId: clientId, info: socketList[clientId] });
+            }
           });
           socket.broadcast.to(roomId).emit('FE-user-join', users);
         } catch (e) {
